@@ -1,0 +1,125 @@
+{% extends 'users/home.html' %}
+
+{% block title %}Статистика{% endblock %}
+
+{% block inner_content %}
+
+    <div class="row">
+        <div class="col-6">
+            <form>
+                <div class="form-group">
+                    <label for="date">Даты:</label>
+                    <input id="date" name="date_before" type="date"/>
+                    <span class="ml-1 mr-1">&mdash;</span>
+                    <input id="date" name="date_after" type="date"/>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="sub">Предмет</label>
+                        </div>
+                        <select class="custom-select" name="subject" id="sub">
+                            <option value="" selected>Все</option>
+                            {% for s in subjects %}
+                                <option value="{{ s.id }}">{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="group">Группа</label>
+                        </div>
+                        <select class="custom-select" name="group" id="group">
+                            <option value="" selected>Все</option>
+                            {% for g in groups %}
+                                <option value="{{ g.id }}">{{ g }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="teach">Преподаватель</label>
+                        </div>
+                        <select class="custom-select" name="teacher" id="teach">
+                            <option value="" selected>Все</option>
+                            {% for t in teachers %}
+                                <option value="{{ t.id }}">{{ t.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" name="type" value="table" class="btn btn-primary btn-block">Показать в виде
+                    таблицы
+                </button>
+                <button type="submit" name="type" value="graph" class="btn btn-secondary btn-block">Показать в виде
+                    графика
+                </button>
+            </form>
+        </div>
+        <div class="col-6">
+            {% if is_table %}
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">ФИО</th>
+                        <th scope="col">Средняя оценка</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for s, val in students %}
+                        <tr>
+                            <th scope="row">{{ s.id }}</th>
+                            <td><a href="{% url 'people' s.id %}">{{ s.full_name }}</a></td>
+                            <td>{{ val }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% elif is_graph %}
+                <canvas id="chart" width="200" height="200"></canvas>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    {% if is_graph %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
+                integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI="
+                crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            let params = document.URL.split('?')
+            console.log(params[1]);
+            $.get('{% url 'getStatsData' %}?' + params[1], (data) => {
+                let ctx = $("#chart").get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'bar', data: data,
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: 'Ср. оценка'
+                                    },
+                                    max: 5,
+                                    min: 0
+                                }
+                            }]
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                });
+            });
+
+        </script>
+    {% endif %}
+{% endblock %}

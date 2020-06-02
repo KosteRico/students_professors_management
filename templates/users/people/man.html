@@ -1,0 +1,39 @@
+{% extends "users/home.html" %}
+
+{% block title %}{{ man.last_name|title }} {{ man.first_name|title }}{% endblock %}
+
+{% block inner_content %}
+
+    <div class="row mb-3">
+        <div class="col-auto mr-auto">
+            <h2>{{ man.full_name }}</h2>
+            <h5 class="text-secondary">{% if man.type == 'S' %}Студент{% elif man.type == 'T' %}Преподаватель{% endif %}
+                группы <a href="{% url 'group' man.group.id %}">№{{ man.group.name }}</a></h5>
+        </div>
+        <div class="col-auto d-flex">
+            {% if man.type == 'S' and decan or man.type == 'S' and tid  %}
+                <form action="{% url 'newMark' %}" method="get">
+                    <input type="hidden" name="s" value="{{ man.id }}"/>
+                    <button type="submit" class="btn btn-info">Создать оценку</button>
+                </form>
+            {% endif %}
+            {% if decan %}
+                <form action="{% url 'people' man.id %}" method="post" class="ml-3">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">Удалить</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    {% if man.is_student %}
+        {% if man.marks.count > 0 %}
+            <div class="row">
+                <div class="col-12">
+                    {% include "users/mark/marks_table_student.html" with m=man tid=tid decan=decan %}
+                </div>
+            </div>
+        {% else %}
+            <h4>Оценки отсутствуют</h4>
+        {% endif %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'users/home.html' %}
+
+{% block title %}Группы{% endblock %}
+
+{% block inner_content %}
+    {% if decan %}
+        <div class="row">
+            <div class="col-6">
+                <form action="{% url 'groups' %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Название группы</span>
+                        </div>
+                        <input name="name" type="text" aria-label="First name" class="form-control">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Создать</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row row-cols-6">
+        {% if groups|length == 1 %}
+            {% include "users/search/group.html" with g=groups|first %}
+        {% else %}
+            {% for g in groups %}
+                {% include "users/search/group.html" with g=g %}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

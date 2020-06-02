@@ -1,0 +1,61 @@
+{% extends "users/home.html" %}
+
+{% block title %}{{ q }}{% endblock %}
+
+{% block inner_content %}
+    {% if groups|length > 0 %}
+        <div class="row">
+            <div class="col-6"><h4>Группы (найдено {{ groups|length }}):</h4></div>
+        </div>
+        <div class="row row-cols-6">
+            {% if groups|length == 1 %}
+                {% include "users/search/group.html" with g=groups.0 %}
+            {% else %}
+                {% for g in groups %}
+                    {% include "users/search/group.html" with g=g %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-6"><h4>Группы не найдены</h4></div>
+        </div>
+    {% endif %}
+    {% if people|length > 0 %}
+        <div class="row">
+            <div class="col-6"><h4>Люди (найдено {{ people|length }}):</h4></div>
+        </div>
+        <div class="row row-cols-4">
+            {% if people|length == 1 %}
+                {% include "users/search/man.html" with p=people.0 %}
+            {% else %}
+                {% for p in people %}
+                    {% include "users/search/man.html" with p=p %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-6"><h4>Люди не найдены</h4></div>
+        </div>
+    {% endif %}
+    {% if subjects|length > 0 %}
+        <div class="row">
+            <div class="col-6"><h4>Предметы (найдено {{ subjects|length }}):</h4></div>
+        </div>
+        <div class="row row-cols-6">
+            {% if subjects|length == 1 %}
+                {% include "users/search/subject.html" with s=subjects.0 %}
+            {% else %}
+                {% for s in subjects %}
+                    {% include "users/search/subject.html" with s=s %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-6"><h4>Предметы не найдены</h4></div>
+        </div>
+    {% endif %}
+
+{% endblock %}

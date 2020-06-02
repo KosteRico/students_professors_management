@@ -1,0 +1,102 @@
+{% extends 'users/home.html' %}
+
+{% block title %}Новая оценка{% endblock %}
+
+{% block inner_content %}
+
+    <div class="row">
+        <div class="col-6">
+            <form action="{% url 'newMark' %}" method="post">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="t">Преподаватель</label>
+                                </div>
+                                <select class="custom-select" name="teacher" id="t">
+                                    {% if t_selected %}
+                                        <option value="{{ t_selected.id }}" selected>{{ t_selected.full_name }}</option>
+                                    {% elif teachers %}
+                                        {% for t in teachers %}
+                                            <option value="{{ t.id }}">{{ t.full_name }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="s">Студент</label>
+                                </div>
+                                <select class="custom-select" name="student" id="s">
+                                    {% if s_selected %}
+                                        <option value="{{ s_selected.id }}" selected>{{ s_selected.full_name }}</option>
+                                    {% elif students %}
+                                        {% for s in students %}
+                                            <option value="{{ s.id }}">{{ s.full_name }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="sub">Предмет</label>
+                                </div>
+                                <select class="custom-select" name="subject" id="sub">
+                                    {% if sub_selected %}
+                                        <option value="{{ sub_selected.id }}"
+                                                selected>{{ sub_selected.full_name }}</option>
+                                    {% elif subjects %}
+                                        {% for s in subjects %}
+                                            <option value="{{ s.id }}">{{ s }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="range">Оценка: <span id="rangeRes"> </span></label>
+                            <input type="range" name="mark" min="2" max="5" value="2" class="custom-range" id="range">
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Дата:</label>
+                            <input id="date" name="date" type="date"/>
+                        </div>
+                        <button type="submit" name="action" class="btn btn-primary" value="create">Создать</button>
+                        <button type="submit" class="btn btn-light" name="action" value="clear">Сбросить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+
+    <script>
+        function changeRange() {
+            let v = $('#range').val();
+            $('#rangeRes').text(v)
+        }
+
+        $(document).ready(() => {
+            changeRange()
+            Date.prototype.toDateInputValue = (function () {
+                var local = new Date(this);
+                local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+                return local.toJSON().slice(0, 10);
+            });
+            $('#date').val(new Date().toDateInputValue());
+            $('#range').change(() => changeRange());
+
+        })
+    </script>
+
+{% endblock %}

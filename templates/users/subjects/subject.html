@@ -1,0 +1,45 @@
+{% extends 'users/home.html' %}
+
+{% block title %}{{ subject }}{% endblock %}
+
+{% block inner_content %}
+
+    <div class="row">
+        <div class="col-auto mr-auto">
+            <h3>{{ subject|title }}</h3>
+        </div>
+
+        {% if decan %}
+            <div class="col-auto">
+                <form action="{% url 'subject' subject.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">Удалить</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+    <h5>Успеваемость</h5>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">Студент</th>
+            <th scope="col">Преподаватель</th>
+            <th scope="col">Оценка</th>
+            <th scope="col">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for mark in subject.marks.all %}
+            <tr class="{% include "users/row_col_generator.html" with v=mark.value %}">
+                <th scope="row"><a href="{% url 'people' mark.student.id %}">{{ mark.student.full_name }}</a></th>
+                <td><a href="{% url 'people' mark.teacher.id %}">{{ mark.teacher.full_name }}</a></td>
+                <td>{{ mark.value|title }}</td>
+                <td>{% if decan or tid == mark.teacher.id %}
+                    <a href="{% url 'mark' mark.id %}" class="m-0 p-0 btn btn-link">Подробнее</a>{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "users/home.html" %}
+
+{% block title %}Группа №{{ group.name }}{% endblock %}
+
+{% block inner_content %}
+    <div class="row mb-3">
+        <div class="col-auto mr-auto">
+            <h3> Группа №{{ group.name }}</h3>
+        </div>
+        <form action="{% url 'newMark' %}" method="get">
+            <input type="hidden" name="g" value="{{ group.id }}" />
+            <button type="submit" class="btn btn-info">Создать оценку</button>
+        </form>
+        {% if decan %}
+            <div class="col-auto">
+                <form action="{% url 'group' group.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">Удалить</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">ФИО</th>
+                    <th scope="col">Тип</th>
+                    <th scope="col">Подробнее</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p in group.people_set.all %}
+                    <tr>
+                        <th scope="row">{{ p.id }}</th>
+                        <td><a href="{% url 'people' p.id %}">{{ p.full_name }}</a></td>
+                        <td>{% if p.type == 'S' %}Студент{% else %}Преподаватель{% endif %}</td>
+                        <td><a href="{% url "people" p.id %}" class="m-0 p-0 btn btn-link">Подробнее</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

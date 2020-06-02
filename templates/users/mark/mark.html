@@ -1,0 +1,52 @@
+{% extends "users/home.html" %}
+
+{% block title %}{{ mark.value }} | {{ mark.student.full_name }}{% endblock %}
+
+{% block inner_content %}
+
+    <div class="card">
+        <div class="card-body">
+            <form action="{% url 'mark' mark.id %}" method="post">
+                {% csrf_token %}
+                <p class="h3">ФИО студента: <a
+                        href="{% url 'people' mark.student.id %}">{{ mark.student.full_name }}</a></p>
+                <p class="h5 mb-3">ФИО преподавателя: <a
+                        href="{% url 'people' mark.teacher.id %}">{{ mark.teacher.full_name }}</a></p>
+                <p>Предмет: <a href="{% url 'subject' mark.subject.id %}">{{ mark.subject }}</a></p>
+                <p>Оценка: {{ mark.value }}</p>
+                <div class="mb-2">
+                    <div class="form-group">
+                        <label for="range">Изменить оценку на <span id="rangeRes"></span></label>
+                        <input type="range" name="mark" min="2" max="5" class="custom-range" id="range">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" name="action" value="save">Сохранить</button>
+                <button type="submit" class="btn btn-outline-danger" name="action" value="delete">Удалить</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+
+    <script>
+        function changeRange() {
+            let v = $('#range').val();
+            $('#rangeRes').text(v)
+        }
+
+        $(document).ready(() => {
+            changeRange()
+            Date.prototype.toDateInputValue = (function () {
+                var local = new Date(this);
+                local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+                return local.toJSON().slice(0, 10);
+            });
+            $('#date').val(new Date().toDateInputValue());
+            $('#range').change(() => changeRange());
+
+        })
+    </script>
+
+{% endblock %}

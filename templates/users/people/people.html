@@ -1,0 +1,81 @@
+{% extends 'users/home.html' %}
+
+{% block title %}Люди{% endblock %}
+
+{% block inner_content %}
+
+    {% if decan %}
+        <div class="row">
+            <div class="col-6">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Фамилие</span>
+                            </div>
+                            <input name="last_name" type="text" aria-label="First name" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Имя</span>
+                            </div>
+                            <input name="first_name" type="text" aria-label="First name" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Отчество</span>
+                            </div>
+                            <input name="father_name" type="text" aria-label="First name" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="inputGroupSelect01">Группа</label>
+                            </div>
+                            <select class="custom-select" name="group" id="inputGroupSelect01">
+                                {% if groups|length == 1 %}
+                                    <option value="{{ g.id }}">{{ g.name }}</option>
+                                {% elif groups|length > 1 %}
+                                    {% for g in groups %}
+                                        <option value="{{ g.id }}">{{ g.name }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">Создать студента</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row">
+        <ul class="nav nav-tabs w-100">
+            <li class="nav-item">
+                <a class="nav-link {% if type == 'S' %}active{% endif %}"
+                   href="{% url 'peopleAll' %}?type=S">Студенты</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if type == 'T' %}active{% endif %}" href="{% url 'peopleAll' %}?type=T">
+                    Преподаватели</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row row-cols-4">
+        {% if people|length == 1 %}
+            {% include 'users/search/man.html' with p=people.0 %}
+        {% elif people|length > 1 %}
+            {% for p in people %}
+                {% include 'users/search/man.html' with p=p %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+<h5>Успеваемость</h5>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th scope="col">Студент</th>
+        <th scope="col">Преподаватель</th>
+        <th scope="col">Оценка</th>
+        <th scope="col">Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for mark in m.marks.all %}
+        <tr class="{% include "users/row_col_generator.html" with v=mark.value %}">
+            <th scope="row">{{ mark.subject }}</th>
+            <td><a href="{% url 'people' mark.teacher.id %}">{{ mark.teacher.full_name }}</a></td>
+            <td>{{ mark.value|title }}</td>
+            <td><a href="{% url 'mark' mark.id %}" class="m-0 p-0 btn btn-link">Подробнее</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

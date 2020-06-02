@@ -1,0 +1,10 @@
+<div class="card m-3 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">{{ p.full_name }}</h5>
+        <div class="card-subtitle mb-1 text-muted">
+            {% if p.type == 'T' %}Преподаватель{% elif p.type == 'S' %}Студент{% endif %}
+            <span> группы №{{ p.group.name }}</span>
+        </div>
+        <a href="{% url "people" p.id %}" class="card-link">Подробнее</a>
+    </div>
+</div>
